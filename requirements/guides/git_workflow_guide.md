@@ -45,7 +45,8 @@ Every commit must:
 4. **Be logically atomic** (one conceptual change per commit)
 
 ```bash
-git commit -S -s -m "Add user authentication feature" -m "- Implement login form\n- Add validation logic"
+git commit -S -s -m "Add user authentication feature" -m "- Implement login form
+- Add validation logic"
 ```
 
 ## Commit Message Format
@@ -182,6 +183,10 @@ gh pr create
    - [ ] Code follows project style
    ```
 
+   When creating PRs:
+   - Check applicable "Type of Change" boxes that reflect your PR's purpose
+   - Leave "Checklist" items unchecked - these will be checked during review
+
 ## Safety Tips
 
 - Always check which branch you're on before making changes
@@ -228,5 +233,37 @@ Key points for urgent changes:
 - Use the same signing and review standards
 - Request admin override only when truly necessary
 - Document the emergency process in the PR
+
+### PR Approval and Admin Merge
+
+For PRs requiring admin override of branch protection:
+
+```bash
+# Approve the PR (if not your own)
+gh pr review <PR-NUMBER> --approve
+
+# Merge with admin override
+gh pr merge <PR-NUMBER> --admin --merge
+
+# Verify merge and clean up
+git checkout main
+git pull
+git branch -D feature/branch-name
+```
+
+Important notes:
+- Use admin merge ONLY when necessary and authorized
+- Cannot approve your own PRs (will receive error)
+- Document the reason for admin override in PR comments
+
+### Checking PR Status
+
+```bash
+# View PR details
+gh pr view <PR-NUMBER>
+
+# List all open PRs
+gh pr list
+```
 
 <!-- Note for Claude: The special workflows section is particularly important for Team development models, but less critical for Solo development. Adjust your guidance based on the project's development model. -->
