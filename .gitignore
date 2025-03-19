@@ -1,0 +1,29 @@
+# Project-specific ignores
+/untracked/*
+!/untracked/.gitkeep
+/.env*
+!/.env.example
+
+# Dependencies
+/node_modules/
+/.pnp
+.pnp.js
+__pycache__/
+*.py[cod]
+
+# Build artifacts
+/build/
+/dist/
+/out/
+/target/
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
