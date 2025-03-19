@@ -1,7 +1,11 @@
 # Git Workflow Quick Reference
 
-> - _created: 2025-03-19_
-> - _last-updated: 2025-03-19_
+> - _did-original-source_: `did:repo:ca85b5ea9bc63cc8229c073d8f6a3faae8062a77/blob/main/requirements/guides/git_workflow_guide.md`
+> - _github-original-source_: `https://github.com/ChristopherA/Claude-Code-CLI-Toolkit/blob/main/requirements/guides/git_workflow_guide.md`
+> - _purpose_: Provide standard Git commands and workflows for the project
+> - _copyright_: ©2025 by @ChristopherA, licensed under the [BSD 2-Clause Plus Patent License](https://spdx.org/licenses/BSD-2-Clause-Patent.html)
+> - _created_: 2025-03-19 by @ChristopherA <ChristopherA@LifeWithAlacrity.com>
+> - _last-updated_: 2025-03-19 by @ChristopherA <ChristopherA@LifeWithAlacrity.com>
 
 ## Essential Git Commands
 
