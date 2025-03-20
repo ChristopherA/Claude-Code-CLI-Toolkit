@@ -29,35 +29,47 @@ There are two states for this repository:
 
 When a user first runs Claude with this toolkit:
 - Check if the .git folder exists - if not, guide them through bootstrap.md
+- IMPORTANT: Run the setup scripts FIRST before any file modifications
+- After script execution, check for existing context files and prioritize those workflows
 - After bootstrap completion, remind the user to delete bootstrap.md
 - Remove bootstrap.md references from CLAUDE.md after setup is complete
 
-<!-- Note for Claude: Always check if the repository is in starting state (no .git folder) or running state. The bootstrap process is a ONE-TIME process that should only be performed in starting state. -->
+<!-- Note for Claude: Always check if the repository is in starting state (no .git folder) or running state. The bootstrap process is a ONE-TIME process that should only be performed in starting state. NEVER modify files while on the main branch. ALWAYS check .gitignore before suggesting files to commit. NEVER commit files in the /untracked directory or system files like .DS_Store. -->
 
 ### New Project Setup
 
-If bootstrap.md is present, and no .git folder exists, help the user through these steps:
+If bootstrap.md is present, and no .git folder exists, help the user through these steps **IN THIS EXACT ORDER**:
 
-1. Gather project information:
+1. **FIRST: Help initialize Git repository**:
+   - Guide user to run setup_local_git_inception.sh
+   - This MUST be done before any file modifications
+   - After execution, remind them this script can be deleted
+
+2. **SECOND: Help set up GitHub (if requested)**:
+   - Guide user to run create_github_remote.sh
+   - After execution, remind them this script can be deleted
+
+3. **THIRD: Check for existing context files**:
+   - Look for files in the contexts/ directory
+   - If docs-import-materials-context.md exists, prioritize creating that branch first
+   - Create branches for any other existing context files
+   - Never attempt to modify files while on the main branch
+
+4. Gather project information:
    - Project name
    - Primary programming language
    - Preferred development model (Solo/Team)
 
-2. Update all files with project information:
+5. Update all files with project information:
+   - Create appropriate feature branch before making any changes
    - Update file headers with project name
    - Set language in appropriate files
    - Configure development model
    - Update creation date (replace all <!-- START_DATE --> placeholders with today's date in YYYY-MM-DD format)
+   - Always check .gitignore before suggesting files to commit
+   - Never commit files in /untracked or system files like .DS_Store
 
-3. Help initialize Git repository:
-   - Guide user to run setup_local_git_inception.sh
-   - After execution, remind them this script can be deleted
-
-4. Help set up GitHub (if requested):
-   - Guide user to run create_github_remote.sh
-   - After execution, remind them this script can be deleted
-
-5. Complete setup:
+6. Complete setup:
    - Remind user to delete bootstrap.md
    - Remove references to bootstrap.md from this file
    - Transition to PROJECT_GUIDE.md for ongoing work

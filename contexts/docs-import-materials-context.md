@@ -9,8 +9,15 @@
 <!-- None yet -->
 
 ## Current Tasks
+- [ ] **Initial Repository Setup**
+  - Commit all base files to the repository
+  - This should be the first commit after the inception commit
+  - Ensure .gitignore is respected (do not commit files in /untracked or system files like .DS_Store)
+
 - [ ] **Document Collection**
-  - Create `untracked/source-material` directory for source documents
+  - Create `untracked/source_materials` directory for source documents
+  - Use `open untracked/source_materials` command to help user open the folder
+  - Wait for user confirmation that files have been added
   - Import documents from existing sources
   - Document origins and sources
   - Organize by preliminary categories
