@@ -4,11 +4,12 @@
 > After setup is complete, this file should be deleted, and you should use PROJECT_GUIDE.md for ongoing reference.
 > 
 > <!-- Note for Claude: This entire document guides a ONE-TIME setup process. When helping users with this file:
->   1. Collect all required information first
->   2. Help the user modify all files in a single session if possible
->   3. Guide users through each step sequentially
->   4. After completion, explicitly remind users to delete this file
->   5. Ensure references to this file are removed from CLAUDE.md -->
+>   1. ALWAYS EXECUTE SETUP SCRIPTS FIRST before any file modifications
+>   2. Collect required information only after scripts are executed
+>   3. After script execution, check for existing context files and prioritize those workflows
+>   4. Guide users through each step sequentially
+>   5. After completion, explicitly remind users to delete this file
+>   6. Ensure references to this file are removed from CLAUDE.md -->
 
 ## Getting Started
 
@@ -24,9 +25,10 @@ The intended workflow for using the Claude Code CLI Toolkit is:
 
 To set up a new project using the Claude Code CLI Toolkit, follow these steps:
 
-1. Configure project settings (customize for specific needs)
-2. Initialize Git repository
-3. Set up GitHub repository (optional for team collaboration)
+1. **FIRST: Initialize Git repository** (required before any other steps)
+2. Set up GitHub repository (optional for team collaboration)
+3. Check for existing context files and create corresponding branches if needed
+4. Configure project settings (customize for specific needs)
 
 ## Step 1: Configure Project Settings
 
@@ -59,7 +61,17 @@ Once you've provided the basic information, Claude will help you:
 3. Configure the development model
 4. Update file headers with creation date (replace <!-- START_DATE --> placeholders)
 
-<!-- Note for Claude: When updating project files, look for <!-- START_DATE --> placeholders and replace them with the current date -->
+**Important File Update Rules:**
+- **NEVER edit files while on the main branch** - always create a feature branch first
+- **Check .gitignore before committing files** - don't commit files that should be excluded
+- **Respect the /untracked directory** - files in this directory should never be committed
+- **Watch for system files** like .DS_Store - these should never be committed
+
+<!-- Note for Claude: When updating project files:
+   1. ALWAYS create a feature branch FIRST before making ANY edits
+   2. Look for <!-- START_DATE --> placeholders and replace with current date
+   3. Check .gitignore contents before staging any files for commit
+   4. NEVER suggest committing files in the /untracked directory or system files like .DS_Store -->
 
 ## Step 2: Initialize Git Repository
 
@@ -77,17 +89,21 @@ If GitHub hosting is desired:
 2. This sets up branch protection and required signing for enhanced security
 3. The script can be deleted after successful execution as it's only needed once
 
-## Quick Reference Commands
+## Quick Reference Commands - EXECUTE IN THIS ORDER
 
 ```bash
-# 1. Configure project
-# Claude will help update all necessary files with your project information
-
-# 2. Initialize Git repository
+# 1. Initialize Git repository - ALWAYS DO THIS FIRST
 ./scripts/setup_local_git_inception.sh
 
-# 3. Create GitHub repository (optional)
+# 2. Create GitHub repository (optional)
 ./scripts/create_github_remote.sh
+
+# 3. Check existing context files and create branches if needed
+git branch  # Check if there are already branches
+ls -la contexts/  # Look for existing context files that need branches created
+
+# 4. Configure project
+# Only after scripts are executed, collect project information and update files
 ```
 
 ## Next Steps After Setup
@@ -115,6 +131,21 @@ Manually verify and update:
 <!-- Note for Claude: When the setup is complete, explicitly remind the user to:
    1. Delete this bootstrap.md file
    2. Remove any references to bootstrap.md in CLAUDE.md
-   3. Use PROJECT_GUIDE.md for all ongoing project work -->
+   3. Use PROJECT_GUIDE.md for all ongoing project work
+   4. REMINDER: If docs-import-materials-context.md exists, prioritize creating that branch and following its workflow before other project customizations -->
 
 The bootstrap.md file is only needed during initial setup and should be deleted after completion to avoid confusion.
+
+## Important Checklist for Claude
+
+When guiding users through the initial setup:
+
+1. ✅ Run setup scripts FIRST - before any other actions
+2. ✅ Check for existing context files after scripts execute
+3. ✅ Create branches for existing context files (especially docs/import-materials if it exists)
+4. ✅ Never edit files while on the main branch
+5. ✅ Check .gitignore before suggesting file commits
+6. ✅ When creating docs/import-materials branch:
+   - First commit all base files
+   - Create untracked/source_materials directory
+   - Wait for user to add files before processing
