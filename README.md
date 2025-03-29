@@ -29,6 +29,7 @@ This toolkit serves two main purposes:
 ## Key Features
 
 - **Structured Development Models**: Choose between Solo or Team development models
+- **Planning Discipline**: Enforced planning phase approval before implementation begins
 - **Context Management**: System for maintaining project context across sessions
 - **Task Tracking**: Organized approach to tracking work and progress
 - **Git Workflow**: Best practices for Git operations and commits

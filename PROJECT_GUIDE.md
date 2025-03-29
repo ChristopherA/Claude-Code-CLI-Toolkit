@@ -70,6 +70,44 @@ claude "load CLAUDE.md and help me debug the error in component X"
 
 ## Core Process Reference
 
+### Claude-Optimized Process Framework
+
+This project uses Claude-optimized process frameworks for efficient and reliable work:
+
+1. **Process Block Structure**: 
+   - Each context uses standardized process blocks with explicit state variables
+   - Blocks follow consistent pattern: STATE_VARIABLES → INITIALIZATION → DETECT → PROCESS → VALIDATION → ERROR HANDLING
+   - Ensures consistent operation and reliable state tracking
+
+2. **Planning Approval Flow**:
+   - Every feature requires explicit planning approval
+   - Planning phase must be completed before implementation
+   - Approval requires exact phrase: `I APPROVE THE PLANNING PHASE`
+   - Implementation is blocked until planning is approved
+
+3. **Phase Management**:
+   - Context proceeds through phases: Planning → Implementation → Completion
+   - Each phase has specific requirements and controls
+   - Progress percentage is automatically calculated
+   - Phase transitions are explicitly tracked
+
+4. **Implementation Permission Control**:
+   - Critical `IMPLEMENTATION_ALLOWED = FALSE` flag blocks premature implementation
+   - File modification guard prevents bypassing planning approval
+   - Security validation detects potential process violations
+   - Error handling defaults to safe states
+
+### Planning to Implementation Transition
+
+When ready to move from planning to implementation:
+
+```bash
+# After reviewing the planning phase details
+claude "I APPROVE THE PLANNING PHASE"
+
+# Claude will update the context file and begin implementation
+```
+
 ### Git Workflow
 
 1. Create a branch for your work
