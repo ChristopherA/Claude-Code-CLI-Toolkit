@@ -136,6 +136,33 @@ Manually verify and update:
 
 The bootstrap.md file is only needed during initial setup and should be deleted after completion to avoid confusion.
 
+## Planning Discipline and Development Phases
+
+This toolkit enforces structured planning discipline for all development work:
+
+1. **Planning Phase Required**:
+   - Every feature branch begins with a mandatory Planning phase
+   - Planning must be explicitly approved before any implementation begins
+   - The planning section defines problem statement, approach, and success criteria
+
+2. **Explicit Approval Mechanism**:
+   - After reviewing the planning section, you must provide explicit approval
+   - To approve, use the exact phrase: `I APPROVE THE PLANNING PHASE`
+   - This unlocks the implementation phase and allows file modifications
+   - No other response will enable implementation to begin
+
+3. **Implementation Permission Control**:
+   - Until planning is approved, file modifications are blocked by Claude
+   - This enforces proper planning before coding
+   - Ensures deliberate decision-making and clear requirements
+
+4. **Development Phase Progression**:
+   - Planning → Implementation → Completion
+   - Each phase has specific requirements and controls
+   - Progress is tracked in the context file with explicit phase markers
+
+This approach ensures work is well-defined and approved before implementation begins, reducing rework and improving clarity.
+
 ## Important Checklist for Claude
 
 When guiding users through the initial setup:

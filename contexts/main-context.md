@@ -1,86 +1,115 @@
-# Main Branch Context
+# Main Branch Facilitation Context
 
-## Current Status
-- Current branch: main
-- Started: <!-- START_DATE -->
-- Progress: Ready for workflow management and branch orchestration
+## For Claude: Main Branch Facilitation Decision Tree
+```
+FUNCTION: Main Branch Process Selection
+TRIGGER: Any user request while on main branch
 
-## Branch Protection Notice
-**IMPORTANT**: The main branch has protection rules that prevent direct commits. All changes must be made via feature branches and pull requests.
+STATE_VARIABLES:
+    current_branch = ""
+    file_modification_attempt = FALSE
+    request_type = ""
+    IMPLEMENTATION_ALLOWED = FALSE  // CRITICAL GATE FLAG - Never allowed on main branch
+    
+INITIALIZATION:
+    EXECUTE "git branch --show-current" -> current_branch
+    
+    IF current_branch != "main":
+        EXIT FUNCTION // Not on main branch, no protection needed
+    
+DETECT file_modification_attempt:
+    SCAN user_request for file_modification_patterns
+    IF file_modification_patterns_found == TRUE:
+        SET file_modification_attempt = TRUE
+    
+PROCESS protection_check:
+    IF file_modification_attempt == TRUE:
+        RESPOND with branch_protection_warning
+        EXECUTE branch_selection_facilitation
+        RETURN
 
-## Main Branch Purpose
-The main branch serves as the coordination point for project management and should NOT contain direct development work. Its primary functions are:
+DETECT request_intent:
+    SCAN user_request for:
+        CONTAINS "help select" -> SET request_type = "branch_selection" 
+        CONTAINS "help review PR" -> SET request_type = "pr_review"
+        CONTAINS "help plan context" -> SET request_type = "context_lifecycle"
+        CONTAINS "help activate" -> SET request_type = "context_activation"
+        CONTAINS "help archive" -> SET request_type = "context_archiving"
+        DEFAULT -> SET request_type = "general_facilitation"
 
-1. PR review and merge management
-2. Branch orchestration and context switching
-3. Work stream task organization and planning
+PROCESS file_modification_guard:
+    // This is the core protection mechanism for main branch
+    BEFORE ANY Edit/Replace/Bash tool use:
+        IF current_branch == "main" && IMPLEMENTATION_ALLOWED == FALSE:
+            BLOCK TOOL EXECUTION
+            RESPOND "⛔ Modification blocked: The main branch is protected.
+                     Please use a working branch for implementation tasks.
+                     I can help you select or create an appropriate branch."
+            EXECUTE branch_selection_facilitation
+            EXIT FUNCTION
 
-## Active Pull Requests
-<!-- List active PRs that need review/merge attention -->
-<!-- Example:
-- [ ] PR #12: "Add user authentication" - Ready for review
-- [~] PR #15: "Fix header styling" - In review (2025-03-15)
--->
-<!-- No active PRs at this time -->
+EXECUTE process_block_selection:
+    LOAD corresponding_process_block from CLAUDE.md based on request_type
+    EXECUTE corresponding_process_block
 
-## Active Branches
-<!-- List active branches with their status -->
-<!-- Example:
-- [~] feature/user-auth - Implementation in progress (2025-03-15)
-- [~] fix/header-style - Testing fixes (2025-03-18)
--->
-<!-- No active branches at this time -->
+VALIDATION:
+    // Security validation
+    IF current_branch == "main" && IMPLEMENTATION_ALLOWED == TRUE:
+        // Detect potential bypass attempt
+        SET IMPLEMENTATION_ALLOWED = FALSE
+        RESPOND "⚠️ Security alert: Implementation permission detected on main branch.
+                 Resetting to safe state. The main branch cannot be modified directly."
+        EXECUTE branch_selection_facilitation
 
-## Available Context Files
-<!-- List context files without branches that can be started -->
-<!-- Example:
-- [ ] feature-payment-processing - Ready to start
--->
-<!-- No available context files at this time -->
+ON ERROR:
+    SET IMPLEMENTATION_ALLOWED = FALSE  // Default to safe state
+    RESPOND "I encountered an issue while processing your request on the main branch.
+             Since this is a protected branch, I'll help you select a working branch
+             where we can proceed with your task safely."
+    EXECUTE branch_selection_facilitation
 
-## Completed Contexts
-<!-- List context files for completed work that can be archived -->
-<!-- Example:
-- [x] docs-initial-setup - Completed (2025-03-10)
--->
-<!-- No completed contexts at this time -->
-
-## Work Stream Management
-- [ ] Review and prioritize items in WORK_STREAM_TASKS.md
-- [ ] Create new context files for upcoming work
-- [ ] Archive completed context files
-- [ ] Update project documentation
-
-<!-- Task format: 
-- [ ] Not started
-- [~] In progress (with start date in YYYY-MM-DD format)
-- [x] Completed (with completion date in YYYY-MM-DD format)
--->
-
-## Key Decisions
-<!-- No entries yet -->
-
-## Notes
-<!-- Optional section for reference information, diagrams, etc. -->
-
-## Special Workflows
-
-### PR Review and Merge Process
-```bash
-claude "load CLAUDE.md, verify current branch is main, review PR #[number], and merge if approved"
+PATTERNS:
+    branch_protection_warning = "I notice we're on the main branch which is protected. 
+    The main branch cannot be directly modified - all changes require pull requests.
+    Let me help you select or create an appropriate working branch for this task."
+    
+    file_modification_patterns = [
+        "create file", "edit file", "modify", "change", "update file",
+        "add new", "delete file", "remove file", "rename file"
+    ]
 ```
 
-### Branch Switching
-```bash
-claude "load CLAUDE.md, verify current branch is main, switch to branch [branch-name], and continue work"
-```
+## Purpose
+To guide users in navigating from the protected main branch to appropriate working branches and facilitating PR reviews.
 
-### Work Stream Management
-```bash
-claude "load CLAUDE.md, verify current branch is main, and organize WORK_STREAM_TASKS.md"
-```
+## Branch Protection
+The main branch cannot be directly modified. All changes require PRs from working branches.
 
-### Context Archiving
+## Facilitation Role
+When on main branch, Claude should:
+1. Help users select or create appropriate working branches
+2. Guide PR review processes without making changes
+3. Assist with context lifecycle planning
+4. Never attempt direct file modifications
+
+## Key Facilitation Commands
+
 ```bash
-claude "load CLAUDE.md, verify current branch is main, archive completed context [context-name], and update documentation"
+# Help select a working branch
+claude "load CLAUDE.md, verify current branch is main, help select working branch"
+
+# Help review pull request
+claude "load CLAUDE.md, verify current branch is main, help review PR #[number]"
+
+# Help plan context lifecycle
+claude "load CLAUDE.md, verify current branch is main, help plan context lifecycle"
+
+# Help activate a future context
+claude "load CLAUDE.md, verify current branch is main, help activate future context [context-name]"
+
+# Help archive a completed context
+claude "load CLAUDE.md, verify current branch is main, help archive completed context [context-name]"
+
+# Help synchronize task tracking
+claude "load CLAUDE.md, verify current branch is main, help synchronize task tracking"
 ```
