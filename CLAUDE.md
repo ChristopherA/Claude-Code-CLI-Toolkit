@@ -3,12 +3,98 @@
 > - _created: 2025-03-19_
 > - _last-updated: 2025-03-31_
 
+## DEVELOPER GUIDE
+
+This document provides essential guidance for working with the Claude Code CLI Toolkit, explaining how Claude helps maintain context and facilitate development workflows.
+
+### Purpose and Architecture
+
+The Claude Code CLI Toolkit implements process frameworks that help Claude:
+
+1. **Maintain Context Awareness**: Track current branch, context file state, and approval status
+2. **Ensure Process Compliance**: Enforce planning before implementation
+3. **Facilitate Workflows**: Streamline branch management, PR reviews, and context lifecycle
+4. **Recover from Errors**: Detect and remediate workflow issues
+
+The process framework architecture uses a standardized structure:
+- **Global Framework**: Branch context management and phase detection
+- **Self-Contained Process Blocks**: Specialized workflows for common operations
+- **Natural Language Detection**: Pattern recognition for more intuitive interaction
+
+### Role Distinctions
+
+This toolkit distinguishes between three roles with different objectives:
+
+**User**: Someone using a project created with this toolkit
+- Primary concern: Using the application/project functionality
+- Typically doesn't interact with Claude or context system
+- May use features implemented with Claude's assistance
+
+**Developer**: Someone building or maintaining a project with this toolkit
+- Primary concern: Implementing features, fixing bugs, enhancing functionality
+- Regular interaction with Claude using natural language or ceremonial patterns
+- Works with context files and follows branch workflows
+
+**Maintainer**: Someone responsible for toolkit infrastructure
+- Primary concern: Managing project structure, workflows, and processes
+- May extend or customize process frameworks
+- Manages context lifecycle and ensures project organization
+
+### Repository Structure
+
+The toolkit organizes project files into a structured hierarchy:
+
+- **CLAUDE.md**: Process framework definitions and developer guidance (this file)
+- **DEVELOPER_GUIDE.md**: Development model definitions and workflow reference
+- **README.md**: Project overview and getting started information
+- **WORK_STREAM_TASKS.md**: Task tracking and management
+- **contexts/**: Branch-specific context files that track work state
+  - **active/**: Currently active work contexts
+  - **futures/**: Planned future work
+  - **archived.md**: Record of completed work
+- **requirements/guides/**: Detailed process documentation
+- **scripts/**: Utility scripts for Git operations and setup
+
+### Interacting with Claude
+
+You can interact with Claude using either ceremonial or conversational patterns:
+
+#### Ceremonial Pattern Examples:
+```bash
+# Starting a new feature
+claude "load CLAUDE.md, create branch feature/auth from main, and implement user authentication"
+
+# Continuing work on a branch
+claude "load CLAUDE.md, verify current branch is feature/auth, and continue implementation"
+
+# Approving planning phase
+claude "load CLAUDE.md, verify current branch is feature/auth, and approve planning phase"
+```
+
+#### Conversational Pattern Examples:
+```bash
+# Starting a new feature
+claude "our project needs user authentication, let's create a branch and implement it"
+
+# Continuing work on a branch
+claude "let's continue working on the authentication feature we started"
+
+# Approving planning phase
+claude "I've reviewed the auth feature plan and I APPROVE THE PLANNING PHASE"
+```
+
+Both styles work equally well - choose the approach that feels most natural for your workflow.
+
 ## For Claude: Process Detection and Execution Framework
 
 ### Global Framework
 ```
 FUNCTION: Branch Context Management
-TRIGGER: Any request requiring branch context awareness
+TRIGGER: Any request requiring branch context awareness OR
+         Messages containing phrases like "our project" OR
+         Messages mentioning branch operations OR
+         Messages indicating implementation intent OR
+         Messages containing approval phrases
 
 STATE_VARIABLES:
     current_branch = ""
@@ -18,6 +104,10 @@ STATE_VARIABLES:
     protection_violation = FALSE
     has_git_folder = TRUE
     bootstrap_needed = FALSE
+    user_intent = ""
+    branch_mentioned = ""
+    feature_mentioned = ""
+    implementation_phrases = []
 
 INITIALIZATION:
     EXECUTE "[ -d .git ] && echo 'true' || echo 'false'" -> has_git_folder_str
@@ -49,7 +139,34 @@ PROCESS bootstrap_process:
                 the complete toolkit files."
 
 PROCESS main_branch_protection_process:
-    DETECT requested_action from user_request
+    // Enhanced action detection with natural language patterns
+    DETECT requested_action from user_request with improved pattern matching:
+        "file_modification" = (
+            message contains edit/create/update/modify/implement/fix/add AND
+            message does not contain "context file" AND
+            message does not contain "in PR" AND
+            message does not contain "on branch" other than main
+        )
+        "pr_review" = (
+            message contains "review PR" OR "check PR" OR "look at PR" OR
+            message contains "PR #" OR "pull request" OR
+            message mentions reviewing changes OR
+            message asks for opinions on code/changes
+        )
+        "context_lifecycle" = (
+            message contains "context" AND (
+                "activate" OR "archive" OR "synchronize" OR "manage" OR "lifecycle"
+            ) OR
+            message contains "future context" OR "completed context" OR
+            message suggests context management operations
+        )
+        "branch_creation" = (
+            message suggests creating or starting new work OR
+            message discusses new features without mentioning branch OR
+            message mentions implementing completely new functionality
+        )
+    
+    // Process detected action
     IF requested_action == "file_modification":
         SET protection_violation = TRUE
         RESPOND with branch_protection_warning
@@ -58,13 +175,23 @@ PROCESS main_branch_protection_process:
         EXECUTE pr_review_facilitation
     ELSE IF requested_action == "context_lifecycle":
         EXECUTE context_lifecycle_facilitation
+    ELSE IF requested_action == "branch_creation":
+        OFFER branch_creation_options
     ELSE:
         EXECUTE general_facilitation
 
 PROCESS working_branch_context_process:
+    // Detect feature/task intent from natural language
+    EXTRACT feature_mentioned = CHECK if message contains specific feature/task names
+    EXTRACT implementation_intent = CHECK if message suggests implementation/coding activity
+    
+    // Map branch name to likely context file with flexible matching
     DETECT context_file_exists = check if "contexts/[branch-type]-[branch-name]-context.md" exists
     
+    // If no context file but we can detect intent, offer context creation
     IF !context_file_exists:
+        IF feature_mentioned != "":
+            SUGGEST "I notice you're working on [feature_mentioned] but I don't see a context file for it."
         EXECUTE context_creation_facilitation
         RETURN
         
@@ -74,20 +201,29 @@ PROCESS working_branch_context_process:
     // Initialize the critical implementation gate flag
     SET IMPLEMENTATION_ALLOWED = FALSE
     
-    // Implementation permission check
+    // Enhanced approval detection with multiple patterns
     IF context_phase == "Planning":
         DETECT planning_approval from context_file
         IF planning_approval == FALSE:
-            // Check for explicit approval command
-            IF "I APPROVE THE PLANNING PHASE" found in latest_user_message:
+            // Check for explicit approval command with flexible patterns
+            IF "I APPROVE THE PLANNING PHASE" found in latest_user_message OR
+               message contains "approve" AND "plan" AND current_branch OR
+               message indicates clear approval of planning with reference to current work:
+                
                 SET planning_approval = TRUE
                 SET IMPLEMENTATION_ALLOWED = TRUE
                 UPDATE context_file planning_approval_section
                 RESPOND "✅ Planning phase approved! The implementation gate has been unlocked."
             ELSE:
-                RESPOND with planning_approval_request
-                // Block implementation until approved
-                RETURN
+                // Check if user intent suggests implementation without approval
+                IF implementation_intent == TRUE:
+                    RESPOND with planning_approval_request
+                    INCLUDE brief_plan_summary from context_file
+                    // Block implementation until approved
+                    RETURN
+                ELSE:
+                    // User might be reviewing the plan, provide helpful context
+                    PROVIDE plan_summary_from_context
         ELSE:
             SET IMPLEMENTATION_ALLOWED = TRUE
             CONTINUE with requested_work
@@ -103,6 +239,12 @@ PROCESS working_branch_context_process:
                      Please review the plan and approve with phrase:
                      'I APPROVE THE PLANNING PHASE'"
             EXIT FUNCTION
+            
+    // Enhanced continuation logic based on natural language
+    IF implementation_intent == TRUE:
+        CHECK current_tasks from context_file
+        IDENTIFY next_logical_task based on completion status and dependencies
+        SUGGEST "Based on the context file, the next logical task would be: [next_logical_task]"
 
 VALIDATION:
     IF has_git_folder:
@@ -1122,3 +1264,37 @@ When creating content with Claude's assistance, NEVER include Claude self-refere
 Check all generated content carefully before finalizing to remove any self-references or attribution to Claude.
 
 <!-- Note for Claude: When helping users with ongoing project work, ALWAYS refer to the appropriate guide for detailed instructions rather than inventing your own approach. This ensures consistency in development practices. -->
+
+## Natural Language Pattern Detection
+
+This toolkit implements a multi-layered approach to detecting user intent from natural language:
+
+### Detection Layers
+
+1. **Goal Detection** - Extracts the primary goal from phrases like "our project is..."
+2. **Intent Matching** - Identifies specific intents like "create branch", "review PR", "implement feature"
+3. **Context Awareness** - Combines the current branch, conversation context, and project goal
+4. **Pattern Recognition** - Matches known patterns for common operations
+5. **Action Resolution** - Determines the appropriate process to execute
+
+### Common Pattern Categories
+
+- **Project Context Patterns**: "our project", "we're working on", "this project needs"
+- **Branch Operation Patterns**: "create branch", "new branch", "switch to branch"
+- **Implementation Patterns**: "implement", "add feature", "fix bug", "enhance"
+- **Planning Patterns**: "plan for", "design", "approach for", "strategy for"
+- **Approval Patterns**: "approve the plan", "looks good", "ready to implement"
+- **Lifecycle Patterns**: "complete", "archive", "finish up", "ready for PR"
+
+### Natural Language Variants
+
+The detection system recognizes many ways to express the same intent:
+
+| Intent | Ceremonial Pattern | Natural Language Variants |
+|--------|-------------------|----------------------------|
+| Create branch | "create branch feature/auth" | "our project needs authentication", "let's add auth features", "implement user login" |
+| Continue work | "verify branch feature/auth" | "let's continue with auth", "back to the authentication work", "resume auth feature" |
+| Approve plan | "approve planning phase" | "the authentication plan looks good", "the auth approach makes sense", "approve the auth plan" |
+| Review PR | "review PR #42" | "check out the changes in PR 42", "what do you think about pull request 42" |
+
+This flexibility allows for more natural conversation while maintaining process integrity.
