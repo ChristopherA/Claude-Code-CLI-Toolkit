@@ -1,7 +1,7 @@
 # ONE-TIME SETUP GUIDE for Claude Code CLI Toolkit
 
 > IMPORTANT: This document is used ONLY DURING INITIAL PROJECT CREATION.
-> After setup is complete, this file should be deleted, and you should use PROJECT_GUIDE.md for ongoing reference.
+> After setup is complete, this file should be deleted, and you should use DEVELOPER_GUIDE.md for ongoing reference.
 > 
 > <!-- Note for Claude: This entire document guides a ONE-TIME setup process. When helping users with this file:
 >   1. ALWAYS EXECUTE SETUP SCRIPTS FIRST before any file modifications
