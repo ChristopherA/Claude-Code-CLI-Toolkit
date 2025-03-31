@@ -1,11 +1,12 @@
-# Claude Code CLI Toolkit - Project Guide
+# Claude Code CLI Toolkit - Developer Guide
 
 > - _did-original-source_: `did:repo:ca85b5ea9bc63cc8229c073d8f6a3faae8062a77/blob/main/PROJECT_GUIDE.md`
-> - _github-original-source_: `https://github.com/ChristopherA/Claude-Code-CLI-Toolkit/blob/main/PROJECT_GUIDE.md`
+> - _github-original-source_: `https://github.com/ChristopherA/Claude-Code-CLI-Toolkit/blob/main/DEVELOPER_GUIDE.md`
 > - _purpose_: Define development models and provide project state overview
 > - _copyright_: ©2025 by @ChristopherA, licensed under the [BSD 2-Clause Plus Patent License](https://spdx.org/licenses/BSD-2-Clause-Patent.html)
 > - _created_: 2025-03-19 by @ChristopherA <ChristopherA@LifeWithAlacrity.com>
-> - _last-updated_: 2025-03-19 by @ChristopherA <ChristopherA@LifeWithAlacrity.com>
+> - _last-updated_: 2025-03-30 by @ChristopherA <ChristopherA@LifeWithAlacrity.com>
+> - _version_: v0.1.03
 
 This guide serves as the central reference for development processes AFTER initial project setup as described in bootstrap.md.
 
