@@ -5,7 +5,7 @@
 > - _purpose_: Provide overview of the Claude Code CLI Toolkit
 > - _copyright_: ©2025 by @ChristopherA, licensed under the [BSD 2-Clause Plus Patent License](https://spdx.org/licenses/BSD-2-Clause-Patent.html)
 > - _created_: 2025-03-19 by @ChristopherA <ChristopherA@LifeWithAlacrity.com>
-> - _last-updated_: 2025-03-19 by @ChristopherA <ChristopherA@LifeWithAlacrity.com>
+> - _last-updated_: 2025-03-31 by @ChristopherA <ChristopherA@LifeWithAlacrity.com>
 
 ## Project Overview
 
@@ -37,7 +37,7 @@ This toolkit serves two main purposes:
 
 ## Development Approach
 
-See PROJECT_GUIDE.md for detailed information about development models and approaches.
+See DEVELOPER_GUIDE.md for detailed information about development models and approaches.
 
 ## Additional Resources
 
