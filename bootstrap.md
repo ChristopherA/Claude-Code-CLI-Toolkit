@@ -77,7 +77,9 @@ Once you've provided the basic information, Claude will help you:
 
 If Git initialization is desired:
 
-1. Run `./scripts/setup_local_git_inception.sh` to create a secure repository
+1. Run `./scripts/setup_git_inception_repo.sh` to create a secure repository
+   - Optional: Specify a custom repository path with `--repo <path>` flag
+   - Optional: Force creation on existing directory with `--force` flag
 2. This creates a signed inception commit with cryptographic root of trust
 3. The script can be deleted after successful execution as it's only needed once
 
@@ -93,7 +95,7 @@ If GitHub hosting is desired:
 
 ```bash
 # 1. Initialize Git repository - ALWAYS DO THIS FIRST
-./scripts/setup_local_git_inception.sh
+./scripts/setup_git_inception_repo.sh  # Use --repo <path> for custom location if needed
 
 # 2. Create GitHub repository (optional)
 ./scripts/create_github_remote.sh
